@@ -7,6 +7,13 @@ from selenium.webdriver.support import expected_conditions as EC
 import getpass
 import time
 import pandas as pd
+from argparse import ArgumentParser
+
+#parse the arguments
+parser = ArgumentParser()
+parser.add_argument("-l", "--link", dest="link", help="Link to the tweet", required=False, type=str)
+
+args = parser.parse_args()
 
 options = Options()
 options.add_argument("--headless=new")
@@ -25,9 +32,21 @@ print(r"""\
                 ⠀⠀⠀⠀⠀⢉⣩⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀
                 ⠒⠶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀
                 ⠀⠀⠀⠉⠙⠛⠛⠛⠛⠛⠛⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ .com                                    
-                --v1.0  by-imbngy
+                --v1.1  by-imbngy
                 """)
 
+
+#scrape the tweets
+def get_tweet(element): 
+    try:
+        WebDriverWait(driver, 10).until(lambda driver: tweet.find_element(By.XPATH, './/span[contains(text(), "@")]'))
+        user = element.find_element(By.XPATH, './/span[contains(text(), "@")]').text
+        text = element.find_element(By.XPATH, './/div[@lang]').text
+        tweets_data = [user, text]
+    except:
+        tweets_data = ["user", "text"]
+
+    return tweets_data
 
 
 website = "https://twitter.com/login"
@@ -73,6 +92,56 @@ except:
     driver.quit()
     exit()
 
+if args.link:
+    users = []
+    texts = []
+    tweet_ids = set()
+    scrolling = True
+    driver.get(args.link)
+    while scrolling:
+        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.XPATH, './/article[@role="article"]')))
+        tweets = driver.find_elements(By.XPATH, './/article[@role="article"]')
+
+        #get the data from the tweets
+        for tweet in tweets:
+            tweet_list = get_tweet(tweet)
+            tweet_id = "".join(tweet_list)
+            if tweet_id not in tweet_ids:
+                tweet_ids.add(tweet_id)
+                users.append(tweet_list[0])
+                print(" ")
+                print("#############################################")
+                print(tweet_list[0])
+                texts.append(" ".join(tweet_list[1].split()))
+                print(" ".join(tweet_list[1].split()))
+                print("#############################################")
+        
+        #scroll down to load more tweets
+        last_height = driver.execute_script("return document.body.scrollHeight")
+        while True: 
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(2)
+            new_height = driver.execute_script("return document.body.scrollHeight")
+            #if new_height == last_height:
+            #   scrolling = False
+            #    break
+            if len(users) > 100 or new_height == last_height:  #change this number to the desired amount of tweets to scrape
+                scrolling = False 
+                break 
+            else:
+                last_height = new_height 
+                break
+
+    driver.quit()
+
+    #save the data to a csv file
+    df_tweets = pd.DataFrame({'user': users, 'text': texts})
+    df_tweets.to_csv('tweets.csv', index=False)
+    print("Done!")
+    exit()
+
+    
+
 
 #-----search mode selection
 print(" ")
@@ -106,18 +175,6 @@ elif search_mode != "1" or search_mode != "2":
     exit()
 
 
-#scrape the tweets
-def get_tweet(element): 
-    try:
-        WebDriverWait(driver, 10).until(lambda driver: tweet.find_element(By.XPATH, './/span[contains(text(), "@")]'))
-        user = element.find_element(By.XPATH, './/span[contains(text(), "@")]').text
-        text = element.find_element(By.XPATH, './/div[@lang]').text
-        tweets_data = [user, text]
-    except:
-        tweets_data = ["user", "text"]
-
-    return tweets_data
-
 users = []
 texts = []
 tweet_ids = set()
@@ -149,7 +206,7 @@ while scrolling:
         #if new_height == last_height:
         #   scrolling = False
         #    break
-        if len(users) > 100:  #change this number to the desired amount of tweets to scrape
+        if len(users) > 100 or new_height == last_height:  #change this number to the desired amount of tweets to scrape
             scrolling = False 
             break 
         else:
