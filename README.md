@@ -7,7 +7,7 @@ PyTweetCli is a lightweight Python script for seamless Twitter tweet retrieval v
 ### Features
 
 - Command-line interface for quick tweet retrieval
-- Fetch tweets by username or keyword
+- Fetch tweets by username, keyword or link
 - Lightweight and user-friendly
 
 ### Requirements
@@ -40,6 +40,37 @@ py main.py
 ```
 
 The script will launch a headless Chrome browser, navigate to twitter.com, and scrape tweets by given input.
+
+### Usage
+
+You can run the script with:
+```bash
+py main.py
+```
+
+or by adding a link argument:
+```bash
+py main.py -l https://twitter.com/tweet-link/example
+```
+
+Both cases it will ask you for a username, or email, and a password:
+```bash
+Enter your username/email:
+Enter your password:
+```
+
+When you don't pass an argument, it will ask if you want to search by keyword or by user:
+```bash
+Select a search mode: 
+1. Search by keyword
+2. Search by user
+
+Enter a number:
+```
+When searching by user, simply put whatever comes after the @, for example:
+```bash
+Enter the desired username: elonmusk
+```
 
 ### Output
 
