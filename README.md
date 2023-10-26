@@ -26,7 +26,7 @@ git clone https://github.com/imbngy/pyTweetCli.git
 
 2. Navigate to the project directory:
 ```bash
-cd PyTweetCli
+cd pyTweetCli
 ```
 
 3. Install requirements:
