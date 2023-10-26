@@ -15,9 +15,11 @@ parser.add_argument("-l", "--link", dest="link", help="Link to the tweet", requi
 
 args = parser.parse_args()
 
-options = Options()
-options.add_argument("--headless=new")
-options.add_argument("window-size=1920,1080")
+chrome_options = Options()
+chrome_options.add_argument("start-maximized")
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("window-size=1920x1080")
+
 
 
 print(r"""\
@@ -32,7 +34,7 @@ print(r"""\
                 ⠀⠀⠀⠀⠀⢉⣩⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀
                 ⠒⠶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀
                 ⠀⠀⠀⠉⠙⠛⠛⠛⠛⠛⠛⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ .com                                    
-                --v1.1  by-imbngy
+                --v1.1.2  by-imbngy
                 """)
 
 
@@ -50,7 +52,7 @@ def get_tweet(element):
 
 
 website = "https://twitter.com/login"
-driver = webdriver.Chrome(options=options)
+driver = webdriver.Chrome(options=chrome_options)
 driver.get(website)
 
 
