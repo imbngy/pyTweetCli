@@ -2,7 +2,7 @@
 
 ### Overview
 
-PyTweetCli is a lightweight Python script for seamless Twitter tweet retrieval via the command line. Easily fetch tweets by username or keyword with simplicity and efficiency.
+PyTweetCli is a lightweight Python script for seamless Twitter tweet retrieval using Selenium via the command line. Easily fetch tweets by username or keyword with simplicity and efficiency.
 
 ### Features
 
